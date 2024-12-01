@@ -10,13 +10,6 @@ import (
 )
 
 func main() {
-	res := part1()
-	fmt.Println(res)
-
-	part2()
-}
-
-func part1() int {
 	lines := filehelpers.GetLines("input.txt")
 
 	list1 := make([]int, len(lines))
@@ -39,6 +32,14 @@ func part1() int {
 		list2[i] = num2
 	}
 
+	res := part1(list1, list2)
+	fmt.Println(res)
+
+	res = part2(list1, list2)
+	fmt.Println(res)
+}
+
+func part1(list1 []int, list2 []int) int {
 	slices.Sort(list1)
 	slices.Sort(list2)
 
@@ -53,6 +54,19 @@ func part1() int {
 	return total
 }
 
-func part2() {
+func part2(list1 []int, list2 []int) int {
+	countMap := make(map[int]int)
+	for _, num2 := range list2 {
+		countMap[num2]++
+	}
 
+	total := 0
+	for _, num1 := range list1 {
+		val, ok := countMap[num1]
+		if ok {
+			total += (num1 * val)
+		}
+	}
+
+	return total
 }
