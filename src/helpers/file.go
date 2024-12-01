@@ -13,7 +13,7 @@ func GetLines(filename string) []string {
 	}
 
 	var strData string = string(data)
-	lines := strings.Split(strData, "\r\n")
+	lines := strings.Split(strData, "\n")
 
 	return lines
 }

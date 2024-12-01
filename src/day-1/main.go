@@ -3,16 +3,20 @@ package main
 import (
 	filehelpers "aoc-2024/src/helpers"
 	"fmt"
+	"math"
 	"slices"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	part1()
+	res := part1()
+	fmt.Println(res)
+
+	part2()
 }
 
-func part1() {
+func part1() int {
 	lines := filehelpers.GetLines("input.txt")
 
 	list1 := make([]int, len(lines))
@@ -37,4 +41,18 @@ func part1() {
 
 	slices.Sort(list1)
 	slices.Sort(list2)
+
+	total := 0
+	for i, num1 := range list1 {
+		num2 := list2[i]
+
+		diff := math.Abs(float64(num1 - num2))
+		total += int(diff)
+	}
+
+	return total
+}
+
+func part2() {
+
 }
