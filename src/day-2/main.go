@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	lines := filehelpers.GetLines("input.txt")
+	lines := filehelpers.GetLines("example.txt")
 	res := part1(lines)
 	fmt.Println(res)
 
@@ -87,8 +87,8 @@ func isReportSafe(report []int, allowRemoval bool) bool {
 
 		if isUnsafe(direction, diff) {
 			if allowRemoval {
-				if isReportSafe(remove(report, i), false) {
-					fmt.Println("removed", report[i])
+				if isReportSafe(remove(report, i-1), false) {
+					fmt.Println("removed", report[i-1])
 					return true
 				}
 			}
