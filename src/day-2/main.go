@@ -78,7 +78,6 @@ func part2(lines []string) int {
 
 			if isUnsafe(lastDiff, diff) {
 				if i != len(splitNums[1:])-1 {
-
 					nextNum, err := strconv.Atoi(splitNums[i+2])
 					if err != nil {
 						panic(err)
