@@ -22,31 +22,15 @@ func part1(lines []string) int {
 	for _, line := range lines {
 		splitNums := strings.Split(line, " ")
 
-		firstNum, err := strconv.Atoi(splitNums[0])
-		if err != nil {
-			panic(err)
-		}
-		lastNum := firstNum
-		lastDiff := 0
-		unsafe := false
-		for _, num := range splitNums[1:] {
+		report := make([]int, 0)
+		for _, num := range splitNums {
 			currNum, err := strconv.Atoi(num)
 			if err != nil {
 				panic(err)
 			}
-
-			diff := currNum - lastNum
-
-			if isUnsafe(lastDiff, diff) {
-				unsafe = true
-				break
-			}
-
-			lastNum = currNum
-			lastDiff = diff
+			report = append(report, currNum)
 		}
-
-		if unsafe {
+		if !isReportSafe(report, false) {
 			unsafeCount++
 		}
 	}
@@ -60,52 +44,68 @@ func part2(lines []string) int {
 	for _, line := range lines {
 		splitNums := strings.Split(line, " ")
 
-		firstNum, err := strconv.Atoi(splitNums[0])
-		if err != nil {
-			panic(err)
-		}
-		lastNum := firstNum
-		lastDiff := 0
-		unsafe := false
-		for i, num := range splitNums[1:] {
-
+		report := make([]int, 0)
+		for _, num := range splitNums {
 			currNum, err := strconv.Atoi(num)
 			if err != nil {
 				panic(err)
 			}
-
-			diff := currNum - lastNum
-
-			if isUnsafe(lastDiff, diff) {
-				if i != len(splitNums[1:])-1 {
-					nextNum, err := strconv.Atoi(splitNums[i+2])
-					if err != nil {
-						panic(err)
-					}
-
-					diff = nextNum - lastNum
-					if isUnsafe(lastDiff, diff) {
-						unsafe = true
-						break
-					}
-				} else {
-					unsafe = true
-					break
-				}
-			}
-
-			lastNum = currNum
-			lastDiff = diff
+			report = append(report, currNum)
 		}
 
-		if unsafe {
+		if !isReportSafe(report, true) {
 			unsafeCount++
+			fmt.Println("unsafe", report)
+		} else {
+			fmt.Println("safe", report)
 		}
 	}
 
 	return len(lines) - unsafeCount
 }
 
-func isUnsafe(lastDiff int, diff int) bool {
-	return (diff > 3 || diff == 0 || diff < -3) || (diff > 0 && lastDiff < 0) || (diff < 0 && lastDiff > 0)
+func isReportSafe(report []int, allowRemoval bool) bool {
+	if len(report) < 2 {
+		return true
+	}
+
+	direction := 0
+	for i, num := range report {
+		if i == 0 {
+			continue
+		}
+
+		diff := num - report[i-1]
+
+		if direction == 0 {
+			if diff > 0 {
+				direction = 1
+			} else if diff < 0 {
+				direction = -1
+			}
+		}
+
+		if isUnsafe(direction, diff) {
+			if allowRemoval {
+				if isReportSafe(remove(report, i), false) {
+					fmt.Println("removed", report[i])
+					return true
+				}
+			}
+			return false
+		}
+
+	}
+
+	return true
+}
+
+func isUnsafe(direction int, diff int) bool {
+	return (diff > 3 || diff == 0 || diff < -3) || (direction != 0 && (diff > 0 && direction < 0) || (diff < 0 && direction > 0))
+}
+
+func remove(s []int, index int) []int {
+	ret := make([]int, 0)
+	ret = append(ret, s[:index]...)
+	return append(ret, s[index+1:]...)
 }
