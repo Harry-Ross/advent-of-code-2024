@@ -32,11 +32,11 @@ func part1(lines []string) int {
 func part2(lines []string) int {
 	total := 0
 
+	execute := true
 	for _, line := range lines {
-		r := regexp.MustCompile(`mul\(([0-9]+),([0-9]+)\)|don't\(\)|do\(\)`)
+		r := regexp.MustCompile(`mul\((\d+),(\d+)\)|don't\(\)|do\(\)`)
 		matches := r.FindAllStringSubmatch(line, -1)
 
-		execute := true
 		for _, match := range matches {
 			if match[0] == "don't()" {
 				execute = false
