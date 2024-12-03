@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	lines := filehelpers.GetLines("example.txt")
+	lines := filehelpers.GetLines("input.txt")
 	res := part1(lines)
 	fmt.Println(res)
 
@@ -69,39 +69,41 @@ func isReportSafe(report []int, allowRemoval bool) bool {
 		return true
 	}
 
-	direction := 0
-	for i, num := range report {
-		if i == 0 {
-			continue
-		}
-
-		diff := num - report[i-1]
-
-		if direction == 0 {
-			if diff > 0 {
-				direction = 1
-			} else if diff < 0 {
-				direction = -1
-			}
-		}
-
-		if isUnsafe(direction, diff) {
-			if allowRemoval {
-				if isReportSafe(remove(report, i-1), false) {
-					fmt.Println("removed", report[i-1])
-					return true
-				}
-			}
-			return false
-		}
-
+	if isIncreasing(report) || isDecreasing(report) {
+		return true
 	}
 
+	if allowRemoval {
+		for i := 0; i < len(report); i++ {
+			removed := remove(report, i)
+			if isIncreasing(removed) || isDecreasing(removed) {
+				fmt.Println("removed", report[i])
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func isIncreasing(report []int) bool {
+	for i := 1; i < len(report); i++ {
+		diff := report[i] - report[i-1]
+		if diff < 1 || diff > 3 {
+			return false
+		}
+	}
 	return true
 }
 
-func isUnsafe(direction int, diff int) bool {
-	return (diff > 3 || diff == 0 || diff < -3) || (direction != 0 && (diff > 0 && direction < 0) || (diff < 0 && direction > 0))
+func isDecreasing(report []int) bool {
+	for i := 1; i < len(report); i++ {
+		diff := report[i] - report[i-1]
+		if diff > -1 || diff < -3 {
+			return false
+		}
+	}
+	return true
 }
 
 func remove(s []int, index int) []int {
